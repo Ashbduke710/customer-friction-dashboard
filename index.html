@@ -1,0 +1,453 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Ashley Duke's product operations portfolio: an AI-assisted customer-friction intelligence dashboard using synthetic data." />
+  <title>Ashley Duke | Customer Friction Intelligence Hub</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #07111f;
+      --panel: #0c1a2c;
+      --panel-2: #11233a;
+      --line: #203a57;
+      --text: #f4f8fb;
+      --muted: #9eb1c5;
+      --cyan: #51d6e8;
+      --green: #8be0a7;
+      --amber: #ffc66d;
+      --red: #ff8b87;
+      --blue: #7eb7ff;
+      --radius: 18px;
+      --shadow: 0 20px 60px rgba(0, 0, 0, .28);
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at 85% -10%, rgba(81, 214, 232, .12), transparent 28rem),
+        radial-gradient(circle at -10% 75%, rgba(126, 183, 255, .09), transparent 32rem),
+        var(--bg);
+      color: var(--text);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-size: 16px;
+      line-height: 1.5;
+    }
+
+    button, select { font: inherit; }
+    button { cursor: pointer; }
+    a { color: inherit; }
+
+    .shell { max-width: 1440px; margin: 0 auto; padding: 24px; }
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+      padding: 10px 0 24px;
+    }
+    .identity { display: flex; align-items: center; gap: 14px; }
+    .monogram {
+      width: 44px; height: 44px; display: grid; place-items: center;
+      border-radius: 13px; color: #05131c; font-weight: 900;
+      background: linear-gradient(135deg, var(--cyan), var(--green));
+      box-shadow: 0 0 0 5px rgba(81, 214, 232, .08);
+    }
+    .identity strong { display: block; letter-spacing: .01em; }
+    .identity span { color: var(--muted); font-size: .82rem; }
+    .top-actions { display: flex; gap: 10px; flex-wrap: wrap; justify-content: flex-end; }
+    .button {
+      min-height: 42px; padding: 9px 14px; border-radius: 11px;
+      border: 1px solid var(--line); background: #0a1727; color: var(--text);
+      transition: transform .15s ease, border-color .15s ease, background .15s ease;
+    }
+    .button:hover { transform: translateY(-1px); border-color: var(--cyan); background: #10253a; }
+    .button.primary { background: var(--cyan); color: #06131d; border-color: var(--cyan); font-weight: 800; }
+
+    .intro {
+      display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(270px, .6fr);
+      gap: 24px; align-items: end; margin-bottom: 20px;
+    }
+    .eyebrow { color: var(--cyan); font-weight: 800; letter-spacing: .12em; text-transform: uppercase; font-size: .76rem; }
+    h1 { font-size: clamp(2rem, 4vw, 4.25rem); line-height: .98; letter-spacing: -.055em; margin: 10px 0 16px; max-width: 920px; }
+    .lede { color: #bed0df; font-size: clamp(1rem, 1.5vw, 1.18rem); max-width: 780px; margin: 0; }
+    .disclosure {
+      border: 1px solid rgba(139, 224, 167, .3); background: rgba(139, 224, 167, .07);
+      border-radius: 15px; padding: 16px; color: #ccebd6; font-size: .88rem;
+    }
+    .disclosure b { color: var(--green); display: block; margin-bottom: 4px; }
+
+    .workspace {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 355px;
+      gap: 18px;
+      align-items: start;
+    }
+    .main { min-width: 0; }
+    .panel {
+      border: 1px solid var(--line); border-radius: var(--radius);
+      background: linear-gradient(180deg, rgba(17,35,58,.9), rgba(9,23,39,.96));
+      box-shadow: var(--shadow);
+    }
+    .toolbar {
+      display: flex; justify-content: space-between; align-items: center; gap: 16px;
+      padding: 15px 16px; margin-bottom: 14px;
+    }
+    .filters { display: flex; gap: 10px; flex-wrap: wrap; }
+    label { color: var(--muted); font-size: .78rem; font-weight: 700; }
+    .field { display: grid; gap: 5px; }
+    select {
+      min-width: 150px; min-height: 40px; padding: 8px 34px 8px 11px;
+      border: 1px solid var(--line); border-radius: 10px; color: var(--text); background: #091727;
+    }
+    .status { color: var(--muted); font-size: .82rem; text-align: right; }
+    .status b { color: var(--green); }
+
+    .kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 14px; }
+    .kpi { padding: 17px; min-height: 126px; position: relative; overflow: hidden; }
+    .kpi::after { content: ""; position: absolute; inset: auto -30px -50px auto; width: 100px; height: 100px; border-radius: 50%; background: rgba(81,214,232,.06); }
+    .kpi .label { color: var(--muted); font-size: .78rem; text-transform: uppercase; letter-spacing: .08em; font-weight: 800; }
+    .kpi .value { font-size: clamp(1.7rem, 3vw, 2.35rem); font-weight: 850; letter-spacing: -.04em; margin: 8px 0 1px; }
+    .kpi .detail { color: var(--muted); font-size: .8rem; }
+    .kpi .positive { color: var(--green); }
+    .kpi .warning { color: var(--amber); }
+
+    .analysis-grid { display: grid; grid-template-columns: 1.1fr .9fr; gap: 14px; }
+    .section { padding: 20px; }
+    .section-head { display: flex; justify-content: space-between; gap: 12px; align-items: start; margin-bottom: 18px; }
+    .section h2 { font-size: 1rem; margin: 0; letter-spacing: -.015em; }
+    .section-note { color: var(--muted); font-size: .78rem; margin-top: 4px; }
+    .legend { display: flex; gap: 10px; color: var(--muted); font-size: .72rem; white-space: nowrap; }
+    .legend span::before { content: ""; display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--cyan); margin-right: 5px; }
+    .legend span:last-child::before { background: var(--amber); }
+
+    .bars { display: grid; gap: 13px; }
+    .bar-row { display: grid; grid-template-columns: minmax(118px, 1fr) 2.5fr 42px; gap: 12px; align-items: center; }
+    .bar-label { font-size: .82rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .bar-track { height: 10px; border-radius: 99px; background: #07111f; overflow: hidden; }
+    .bar-fill { height: 100%; border-radius: inherit; background: linear-gradient(90deg, var(--cyan), var(--blue)); transition: width .45s ease; }
+    .bar-value { color: var(--muted); font-size: .78rem; text-align: right; }
+
+    .matrix { display: grid; grid-template-columns: 42px 1fr; grid-template-rows: 1fr 30px; min-height: 268px; }
+    .axis-y { writing-mode: vertical-rl; transform: rotate(180deg); display: grid; place-items: center; color: var(--muted); font-size: .72rem; letter-spacing: .06em; text-transform: uppercase; }
+    .axis-x { grid-column: 2; text-align: center; color: var(--muted); font-size: .72rem; letter-spacing: .06em; text-transform: uppercase; padding-top: 7px; }
+    .plot {
+      position: relative; border-left: 1px solid var(--line); border-bottom: 1px solid var(--line);
+      background:
+        linear-gradient(90deg, transparent 49.6%, var(--line) 50%, transparent 50.4%),
+        linear-gradient(0deg, transparent 49.6%, var(--line) 50%, transparent 50.4%);
+    }
+    .quadrant { position: absolute; font-size: .68rem; color: #668099; text-transform: uppercase; letter-spacing: .08em; }
+    .q1 { right: 8px; top: 7px; color: var(--green); }
+    .q2 { left: 8px; top: 7px; }
+    .q3 { left: 8px; bottom: 7px; }
+    .q4 { right: 8px; bottom: 7px; }
+    .bubble {
+      position: absolute; width: 34px; height: 34px; border-radius: 50%;
+      border: 2px solid rgba(255,255,255,.55); color: #06131d; font-size: .7rem; font-weight: 900;
+      display: grid; place-items: center; transform: translate(-50%, 50%);
+      box-shadow: 0 8px 20px rgba(0,0,0,.35); transition: transform .15s ease, filter .15s ease;
+    }
+    .bubble:hover, .bubble.active { transform: translate(-50%, 50%) scale(1.14); filter: brightness(1.15); z-index: 3; }
+
+    .priority { margin-top: 14px; overflow: hidden; }
+    .table-wrap { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; min-width: 720px; }
+    th, td { padding: 13px 15px; border-bottom: 1px solid var(--line); text-align: left; font-size: .82rem; }
+    th { color: var(--muted); font-size: .72rem; text-transform: uppercase; letter-spacing: .07em; background: rgba(5,17,31,.45); }
+    tr:last-child td { border-bottom: 0; }
+    tbody tr { transition: background .15s ease; }
+    tbody tr:hover, tbody tr.selected { background: rgba(81,214,232,.06); }
+    .rank { width: 32px; height: 32px; display: grid; place-items: center; border-radius: 9px; background: #142942; font-weight: 900; }
+    .theme-name { font-weight: 800; }
+    .theme-code { color: var(--muted); font-size: .72rem; margin-top: 2px; }
+    .score { font-weight: 900; color: var(--cyan); }
+    .pill { display: inline-flex; padding: 4px 8px; border-radius: 99px; font-size: .7rem; font-weight: 800; border: 1px solid rgba(255,198,109,.35); color: var(--amber); background: rgba(255,198,109,.08); }
+    .pill.now { color: var(--green); border-color: rgba(139,224,167,.35); background: rgba(139,224,167,.08); }
+
+    .rail { position: sticky; top: 16px; display: grid; gap: 14px; }
+    .rail .panel { padding: 19px; }
+    .rail h2 { margin: 0 0 4px; font-size: 1rem; }
+    .rail p { color: var(--muted); font-size: .84rem; margin: 0; }
+    .issue-title { font-size: 1.35rem; font-weight: 850; line-height: 1.15; letter-spacing: -.03em; margin: 16px 0 8px; }
+    .metric-line { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 16px 0; }
+    .mini { border: 1px solid var(--line); border-radius: 10px; padding: 9px; background: rgba(5,17,31,.4); }
+    .mini b { display: block; font-size: 1.05rem; }
+    .mini span { color: var(--muted); font-size: .68rem; }
+    .recommendation { border-left: 3px solid var(--cyan); padding: 2px 0 2px 13px; color: #dce9f2; font-size: .86rem; }
+    .evidence { margin: 15px 0 0; padding: 13px; border-radius: 12px; background: #071421; color: #afc2d2; font-size: .78rem; font-style: italic; }
+
+    .pipeline { display: grid; gap: 12px; margin-top: 15px; }
+    .step { display: grid; grid-template-columns: 30px 1fr; gap: 10px; align-items: start; }
+    .step-num { width: 28px; height: 28px; display: grid; place-items: center; border-radius: 8px; background: rgba(81,214,232,.12); color: var(--cyan); font-weight: 900; font-size: .75rem; }
+    .step b { display: block; font-size: .82rem; }
+    .step span { display: block; color: var(--muted); font-size: .75rem; margin-top: 2px; }
+
+    .qa-list { display: grid; gap: 10px; margin-top: 15px; }
+    .qa { display: flex; justify-content: space-between; gap: 12px; font-size: .8rem; }
+    .qa span { color: var(--muted); }
+    .qa b { color: var(--green); }
+    .meter { height: 6px; background: #07111f; border-radius: 99px; overflow: hidden; margin-top: 4px; }
+    .meter i { display: block; height: 100%; background: var(--green); border-radius: inherit; }
+
+    .case-study { margin-top: 18px; padding: 24px; }
+    .case-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 24px; }
+    .case-study h3 { font-size: .78rem; color: var(--cyan); text-transform: uppercase; letter-spacing: .1em; margin: 0 0 9px; }
+    .case-study p, .case-study li { color: #b5c7d7; font-size: .84rem; }
+    .case-study ul { margin: 0; padding-left: 18px; }
+    .case-study li + li { margin-top: 6px; }
+    footer { color: #7890a6; font-size: .75rem; text-align: center; padding: 28px 10px 6px; }
+
+    dialog {
+      width: min(760px, calc(100% - 30px)); max-height: 88vh; overflow: auto;
+      color: var(--text); background: #0b192a; border: 1px solid var(--line); border-radius: 20px; padding: 0; box-shadow: var(--shadow);
+    }
+    dialog::backdrop { background: rgba(2,8,15,.78); backdrop-filter: blur(4px); }
+    .modal-head { position: sticky; top: 0; display: flex; align-items: center; justify-content: space-between; padding: 18px 20px; background: #0b192a; border-bottom: 1px solid var(--line); z-index: 2; }
+    .modal-head h2 { margin: 0; font-size: 1rem; }
+    .close { width: 36px; height: 36px; border-radius: 10px; border: 1px solid var(--line); background: transparent; color: var(--text); font-size: 1.1rem; }
+    .modal-body { padding: 22px; }
+    .modal-body h3 { margin: 22px 0 8px; font-size: .94rem; color: var(--cyan); }
+    .modal-body h3:first-child { margin-top: 0; }
+    .modal-body p, .modal-body li { color: #b8c9d7; font-size: .9rem; }
+    .formula { padding: 14px; border-radius: 12px; background: #071421; border: 1px solid var(--line); font-family: ui-monospace, SFMono-Regular, Menlo, monospace; color: var(--green); font-size: .82rem; }
+
+    @media (max-width: 1080px) {
+      .workspace { grid-template-columns: 1fr; }
+      .rail { position: static; grid-template-columns: repeat(3, 1fr); }
+      .rail .panel:first-child { grid-column: span 1; }
+      .kpis { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 760px) {
+      .shell { padding: 15px; }
+      .topbar, .intro, .toolbar { align-items: stretch; }
+      .topbar, .toolbar { flex-direction: column; }
+      .top-actions { justify-content: stretch; }
+      .top-actions .button { flex: 1; }
+      .intro { grid-template-columns: 1fr; }
+      h1 { font-size: 2.55rem; }
+      .analysis-grid, .case-grid { grid-template-columns: 1fr; }
+      .rail { grid-template-columns: 1fr; }
+      .kpis { grid-template-columns: 1fr 1fr; }
+      .kpi { min-height: 110px; padding: 14px; }
+      .kpi .value { font-size: 1.75rem; }
+      .filters { display: grid; grid-template-columns: 1fr 1fr; }
+      select { min-width: 0; width: 100%; }
+      .status { text-align: left; }
+    }
+    @media (max-width: 470px) {
+      .kpis, .filters { grid-template-columns: 1fr; }
+      .bar-row { grid-template-columns: 105px 1fr 36px; gap: 8px; }
+      .metric-line { grid-template-columns: 1fr; }
+    }
+    @media print {
+      :root { color-scheme: light; }
+      body { background: white; color: #102030; }
+      .shell { max-width: none; padding: 0; }
+      .top-actions, .toolbar { display: none; }
+      .panel { box-shadow: none; break-inside: avoid; background: white; border-color: #cbd5df; }
+      .workspace { grid-template-columns: 1fr; }
+      .rail { position: static; grid-template-columns: repeat(3, 1fr); }
+      .lede, .section-note, .detail, .rail p, .case-study p, .case-study li, .bar-value, .status { color: #506579 !important; }
+      .kpi .value, .section h2, .rail h2, .issue-title, .theme-name { color: #102030; }
+      footer { color: #60758a; }
+    }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <header class="topbar">
+      <div class="identity">
+        <div class="monogram" aria-hidden="true">AD</div>
+        <div><strong>Ashley Duke</strong><span>Product operations portfolio</span></div>
+      </div>
+      <div class="top-actions">
+        <button class="button" id="methodButton">Methodology</button>
+        <button class="button" id="csvButton">Download analysis</button>
+        <button class="button primary" onclick="window.print()">Save as PDF</button>
+      </div>
+    </header>
+
+    <section class="intro">
+      <div>
+        <div class="eyebrow">Customer intelligence prototype</div>
+        <h1>Find the friction.<br />Prioritize the fix.</h1>
+        <p class="lede">An AI-assisted workflow that turns scattered customer feedback into validated themes, a transparent opportunity score, and a decision-ready product backlog.</p>
+      </div>
+      <div class="disclosure"><b>Independent portfolio project</b>Built for demonstration using synthetic feedback modeled on connected-operations workflows. No confidential, patient, employer, or Samsara customer data is included.</div>
+    </section>
+
+    <section class="workspace" aria-label="Customer friction intelligence dashboard">
+      <div class="main">
+        <div class="toolbar panel">
+          <div class="filters">
+            <div class="field"><label for="segmentFilter">Customer segment</label><select id="segmentFilter"><option value="all">All segments</option><option value="Enterprise">Enterprise</option><option value="Mid-market">Mid-market</option><option value="SMB">SMB</option></select></div>
+            <div class="field"><label for="channelFilter">Feedback source</label><select id="channelFilter"><option value="all">All sources</option><option value="Support ticket">Support tickets</option><option value="Survey">Surveys</option><option value="Interview">Interviews</option></select></div>
+          </div>
+          <div class="status"><b>● Analysis ready</b><br /><span id="recordStatus">1,248 synthetic records · Q3 sample</span></div>
+        </div>
+
+        <div class="kpis" id="kpis"></div>
+
+        <div class="analysis-grid">
+          <article class="panel section">
+            <div class="section-head"><div><h2>Friction themes</h2><div class="section-note">Share of filtered feedback</div></div><div class="legend"><span>Volume</span><span>Severity</span></div></div>
+            <div class="bars" id="bars" aria-label="Feedback volume by theme"></div>
+          </article>
+          <article class="panel section">
+            <div class="section-head"><div><h2>Opportunity map</h2><div class="section-note">Bubble size reflects feedback volume</div></div></div>
+            <div class="matrix"><div class="axis-y">Customer impact</div><div class="plot" id="plot"><span class="quadrant q1">Prioritize</span><span class="quadrant q2">Investigate</span><span class="quadrant q3">Monitor</span><span class="quadrant q4">Quick wins</span></div><div class="axis-x">Implementation confidence</div></div>
+          </article>
+        </div>
+
+        <article class="panel priority">
+          <div class="section" style="padding-bottom:8px"><div class="section-head" style="margin:0"><div><h2>Recommended product backlog</h2><div class="section-note">Ranked by evidence, impact, reach and confidence</div></div><button class="button" id="formulaButton">View scoring formula</button></div></div>
+          <div class="table-wrap"><table><thead><tr><th>Rank</th><th>Customer problem</th><th>Volume</th><th>Severity</th><th>Score</th><th>Action</th></tr></thead><tbody id="backlog"></tbody></table></div>
+        </article>
+
+        <article class="panel case-study">
+          <div class="case-grid">
+            <div><h3>Problem</h3><p>Product teams receive valuable signals through support tickets, surveys, interviews and feature requests—but inconsistent labels make patterns difficult to compare.</p></div>
+            <div><h3>Approach</h3><p>I designed a repeatable workflow to normalize feedback, apply an AI-assisted taxonomy, route low-confidence classifications for human review and score opportunities transparently.</p></div>
+            <div><h3>Decision</h3><p>The model elevates route-editing clarity and mobile sync reliability as the first two opportunities to validate, while preserving traceable evidence for each recommendation.</p></div>
+          </div>
+        </article>
+      </div>
+
+      <aside class="rail">
+        <article class="panel" id="detailCard">
+          <h2>Selected opportunity</h2><p>Click a row or bubble to inspect the evidence.</p>
+          <div class="issue-title" id="issueTitle"></div>
+          <div class="metric-line" id="issueMetrics"></div>
+          <div class="recommendation" id="recommendation"></div>
+          <div class="evidence" id="evidence"></div>
+        </article>
+        <article class="panel">
+          <h2>Analysis pipeline</h2><p>From unstructured feedback to a trusted decision.</p>
+          <div class="pipeline">
+            <div class="step"><div class="step-num">01</div><div><b>Normalize</b><span>Deduplicate records and standardize source fields.</span></div></div>
+            <div class="step"><div class="step-num">02</div><div><b>Classify</b><span>Apply a six-theme taxonomy with confidence scores.</span></div></div>
+            <div class="step"><div class="step-num">03</div><div><b>Validate</b><span>Review low-confidence and high-severity records.</span></div></div>
+            <div class="step"><div class="step-num">04</div><div><b>Prioritize</b><span>Rank opportunities using transparent weighted inputs.</span></div></div>
+          </div>
+        </article>
+        <article class="panel">
+          <h2>Quality checks</h2><p>Controls prevent AI output from becoming automatic truth.</p>
+          <div class="qa-list">
+            <div><div class="qa"><span>Classification agreement</span><b>91.8%</b></div><div class="meter"><i style="width:91.8%"></i></div></div>
+            <div><div class="qa"><span>Low-confidence review</span><b>100%</b></div><div class="meter"><i style="width:100%"></i></div></div>
+            <div><div class="qa"><span>Required-field completeness</span><b>98.6%</b></div><div class="meter"><i style="width:98.6%"></i></div></div>
+            <div><div class="qa"><span>Duplicate resolution</span><b>47 records</b></div></div>
+          </div>
+        </article>
+      </aside>
+    </section>
+
+    <footer>Designed and built by Ashley Duke · Product Operations portfolio · September 2026</footer>
+  </main>
+
+  <dialog id="methodDialog">
+    <div class="modal-head"><h2>Methodology & project notes</h2><button class="close" aria-label="Close">×</button></div>
+    <div class="modal-body">
+      <h3>What this prototype demonstrates</h3>
+      <p>This project shows how I would structure ambiguous customer feedback, validate AI-assisted outputs and turn the analysis into a product decision. The interface is a working front-end prototype; all records and quotations are synthetic.</p>
+      <h3>Data model</h3>
+      <ul><li>Feedback source, customer segment, theme, severity and confidence</li><li>Frequency and reach estimates by problem area</li><li>Customer-impact and implementation-confidence inputs</li><li>Traceable example evidence and a recommended next action</li></ul>
+      <h3>Human-in-the-loop controls</h3>
+      <ul><li>Review every record below 80% classification confidence</li><li>Review all severity-5 records regardless of model confidence</li><li>Compare a stratified human-coded sample with model labels</li><li>Document overrides and revise the taxonomy when disagreement clusters</li></ul>
+      <h3>Opportunity score</h3>
+      <div class="formula">Score = 0.30 × volume + 0.30 × severity + 0.25 × customer impact + 0.15 × confidence</div>
+      <p>Each input is normalized to a 100-point scale. The score is a prioritization aid—not a substitute for discovery, technical feasibility review or product judgment.</p>
+      <h3>Transferable experience</h3>
+      <p>My healthcare operations background required the same core habits: finding patterns across high-volume interactions, resolving workflow friction, documenting accurately, using Epic and Excel, and explaining complex processes clearly to different users.</p>
+    </div>
+  </dialog>
+
+  <script>
+    const themes = [
+      { id:'route', code:'RT', name:'Route editing clarity', volume:292, severity:4.6, impact:92, confidence:78, hours:1180, recommendation:'Prototype an inline route-editing confirmation that previews downstream schedule changes before save.', evidence:'“I changed one stop and could not tell whether the rest of the route updated.” — synthetic enterprise support ticket', color:'#51d6e8', segments:{Enterprise:.45,'Mid-market':.36,SMB:.19}, channels:{'Support ticket':.58,Survey:.27,Interview:.15} },
+      { id:'sync', code:'MS', name:'Mobile sync reliability', volume:246, severity:4.8, impact:96, confidence:63, hours:1540, recommendation:'Instrument failed sync states, expose recovery guidance and test an offline retry queue with field users.', evidence:'“The update appeared complete, but dispatch still saw the previous status.” — synthetic mid-market interview', color:'#8be0a7', segments:{Enterprise:.39,'Mid-market':.42,SMB:.19}, channels:{'Support ticket':.66,Survey:.22,Interview:.12} },
+      { id:'alerts', code:'AN', name:'Alert noise', volume:218, severity:3.7, impact:73, confidence:88, hours:640, recommendation:'Test role-based alert bundles and a weekly digest for repeated low-urgency notifications.', evidence:'“Important alerts get buried because the same low-priority event keeps repeating.” — synthetic survey response', color:'#ffc66d', segments:{Enterprise:.34,'Mid-market':.38,SMB:.28}, channels:{'Support ticket':.34,Survey:.51,Interview:.15} },
+      { id:'permissions', code:'PA', name:'Permissions ambiguity', volume:181, severity:4.2, impact:84, confidence:71, hours:810, recommendation:'Create a permission preview that shows exactly which locations, assets and actions each role can access.', evidence:'“We need a safer way to confirm access before onboarding a new dispatcher.” — synthetic enterprise interview', color:'#7eb7ff', segments:{Enterprise:.56,'Mid-market':.31,SMB:.13}, channels:{'Support ticket':.49,Survey:.25,Interview:.26} },
+      { id:'reports', code:'RE', name:'Report exports', volume:167, severity:3.2, impact:64, confidence:91, hours:470, recommendation:'Add saved export presets and preserve the user’s selected filters in downloaded reports.', evidence:'“I rebuild the same filtered export every Monday.” — synthetic SMB survey response', color:'#b99aff', segments:{Enterprise:.28,'Mid-market':.35,SMB:.37}, channels:{'Support ticket':.27,Survey:.61,Interview:.12} },
+      { id:'onboarding', code:'ON', name:'Setup handoffs', volume:144, severity:3.9, impact:76, confidence:82, hours:720, recommendation:'Introduce an owner-based launch checklist with clear dependencies and a shared implementation status.', evidence:'“We were unsure who owned the next setup step after the kickoff.” — synthetic mid-market support ticket', color:'#ff8b87', segments:{Enterprise:.33,'Mid-market':.44,SMB:.23}, channels:{'Support ticket':.42,Survey:.31,Interview:.27} }
+    ];
+    let selected = 'route';
+
+    function filteredData() {
+      const segment = document.querySelector('#segmentFilter').value;
+      const channel = document.querySelector('#channelFilter').value;
+      return themes.map(t => {
+        const s = segment === 'all' ? 1 : t.segments[segment];
+        const c = channel === 'all' ? 1 : t.channels[channel];
+        const volume = Math.max(1, Math.round(t.volume * s * c));
+        const score = Math.round((volume / 292 * 100) * .30 + (t.severity / 5 * 100) * .30 + t.impact * .25 + t.confidence * .15);
+        return {...t, baseVolume:t.volume, volume, score};
+      }).sort((a,b) => b.score - a.score);
+    }
+
+    function render() {
+      const data = filteredData();
+      const total = data.reduce((n,t) => n+t.volume, 0);
+      const avgSeverity = data.reduce((n,t) => n + t.severity*t.volume, 0)/total;
+      const highImpact = data.filter(t => t.impact >= 80).length;
+      const hours = Math.round(data.reduce((n,t) => n + t.hours * (t.volume/t.baseVolume), 0));
+      document.querySelector('#recordStatus').textContent = `${total.toLocaleString()} synthetic records · Q3 sample`;
+      document.querySelector('#kpis').innerHTML = [
+        ['Feedback records', total.toLocaleString(), 'Across selected sources', ''],
+        ['Weighted severity', avgSeverity.toFixed(1) + '/5', 'Human-reviewed scale', 'warning'],
+        ['High-impact themes', highImpact, 'Impact score ≥ 80', ''],
+        ['Hours at risk', hours.toLocaleString(), 'Directional estimate', 'positive']
+      ].map(k => `<article class="kpi panel"><div class="label">${k[0]}</div><div class="value ${k[3]}">${k[1]}</div><div class="detail">${k[2]}</div></article>`).join('');
+
+      const max = Math.max(...data.map(t => t.volume));
+      document.querySelector('#bars').innerHTML = data.map(t => `<div class="bar-row" title="Severity ${t.severity}/5"><div class="bar-label">${t.name}</div><div class="bar-track"><div class="bar-fill" style="width:${(t.volume/max)*100}%;background:linear-gradient(90deg,${t.color},${t.severity >= 4.5 ? '#ffb06b' : t.color})"></div></div><div class="bar-value">${Math.round(t.volume/total*100)}%</div></div>`).join('');
+
+      document.querySelector('#plot').querySelectorAll('.bubble').forEach(el => el.remove());
+      data.forEach(t => {
+        const b = document.createElement('button');
+        b.className = 'bubble' + (t.id === selected ? ' active' : '');
+        b.textContent = t.code; b.title = t.name;
+        b.style.left = `${Math.max(8, Math.min(92, t.confidence))}%`;
+        b.style.bottom = `${Math.max(10, Math.min(88, t.impact))}%`;
+        b.style.width = b.style.height = `${28 + (t.volume/max)*18}px`;
+        b.style.background = t.color;
+        b.onclick = () => { selected = t.id; render(); };
+        document.querySelector('#plot').appendChild(b);
+      });
+
+      document.querySelector('#backlog').innerHTML = data.map((t,i) => `<tr data-id="${t.id}" class="${t.id===selected?'selected':''}" tabindex="0"><td><div class="rank">${i+1}</div></td><td><div class="theme-name">${t.name}</div><div class="theme-code">${t.code} · synthetic theme</div></td><td>${t.volume}</td><td>${t.severity.toFixed(1)}/5</td><td class="score">${t.score}</td><td><span class="pill ${i<2?'now':''}">${i<2?'Validate now':'Queue discovery'}</span></td></tr>`).join('');
+      document.querySelectorAll('#backlog tr').forEach(row => {
+        const choose = () => { selected = row.dataset.id; render(); };
+        row.onclick = choose; row.onkeydown = e => { if(e.key==='Enter' || e.key===' ') choose(); };
+      });
+
+      const current = data.find(t => t.id === selected) || data[0];
+      document.querySelector('#issueTitle').textContent = current.name;
+      document.querySelector('#issueMetrics').innerHTML = `<div class="mini"><b>${current.score}</b><span>priority score</span></div><div class="mini"><b>${current.volume}</b><span>signals</span></div><div class="mini"><b>${current.impact}</b><span>impact</span></div>`;
+      document.querySelector('#recommendation').textContent = current.recommendation;
+      document.querySelector('#evidence').textContent = current.evidence;
+    }
+
+    const dialog = document.querySelector('#methodDialog');
+    document.querySelector('#methodButton').onclick = () => dialog.showModal();
+    document.querySelector('#formulaButton').onclick = () => dialog.showModal();
+    document.querySelector('.close').onclick = () => dialog.close();
+    dialog.onclick = e => { if (e.target === dialog) dialog.close(); };
+    document.querySelectorAll('select').forEach(el => el.addEventListener('change', render));
+
+    document.querySelector('#csvButton').onclick = () => {
+      const rows = filteredData();
+      const csv = ['rank,theme,signals,severity,customer_impact,implementation_confidence,priority_score,recommended_action', ...rows.map((t,i) => [i+1, t.name, t.volume, t.severity, t.impact, t.confidence, t.score, t.recommendation].map(v => `"${String(v).replaceAll('"','""')}"`).join(','))].join('\n');
+      const blob = new Blob([csv], {type:'text/csv'});
+      const url = URL.createObjectURL(blob); const a = document.createElement('a');
+      a.href = url; a.download = 'ashley-duke-customer-friction-analysis.csv'; a.click(); URL.revokeObjectURL(url);
+    };
+    render();
+  </script>
+</body>
+</html>
